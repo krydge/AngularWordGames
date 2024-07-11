@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import words from '../../../data/words_dictionary';
 import PlayStates from '../../../data/PlayStates';
+import { UserService } from '../../../services/UserServices';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-word-guess',
@@ -13,23 +15,25 @@ import PlayStates from '../../../data/PlayStates';
 export class WordGuessComponent {
   state = PlayStates.playing
   title: string = " Word Guess";
-  instructions: string = "Guess the word, enter your guess for the word. Correctly placed letters will be underlined in green, correctly guessed  in the incorrect position will be underlined in yellow. Incorrectly guessed letters will be underlined in red. You have 6 guesses. Good luck!";
+  maxTries: number = 6
+  instructions: string = `Guess the word, enter your guess for the word. Correctly placed letters will be underlined in green, correctly guessed  in the incorrect position will be underlined in yellow. Incorrectly guessed letters will be underlined in red. You have ${this.maxTries} guesses. Good luck!`;
   difficulty = '0';
   word: string = ''
   guessedLetters: string[] = [];
   tries: number = 0;
-  maxTries: number = 3
   styles: any[] = []
+  definition!: Observable<any>;
+  hint: boolean = false
+  anotherHint:boolean=false
+  usedLetters: string[] = []
 
-  constructor() {
+  constructor(private _userService: UserService) {
     this.getWord()
-
-
   }
   ngOnInit() {
     this.getWord()
-  }
 
+  }
   onSubmit(guess: string) {
 
   }
@@ -39,14 +43,25 @@ export class WordGuessComponent {
   getWord() {
     let wordList: any = []
     words.map(element => {
-      if (element.length == Number(this.difficulty) + 5)
+      if (element.length == Number(this.difficulty) + 3)
         wordList.push(element)
     });
     let w = wordList[Math.floor(Math.random() * wordList.length)];
+    let res = this._userService.getUser(w)
+    res.subscribe({
+      next: data => {
+        this.definition = data[0].meanings[0].definitions[0].definition
+      },
+      error: error => {
+        console.log(error)
+        this.getWord()
+      }
+    }
+    )
 
+    console.log(this.definition)
     this.word = w
   }
-
   checkWord() {
     console.log(this.guessedLetters)
     let isgood = true;
@@ -56,12 +71,19 @@ export class WordGuessComponent {
       return
     }
     this.styles = []
+
     for (let x = 0; x < this.guessedLetters.length; x++) {
-      this.styles.push({ "color": this.setColor(this.guessedLetters[x], x) })
-      if (!this.checkIsGoodLetter(this.guessedLetters[x], x)){
+      this.styles.push({ "borderColor": this.setColor(this.guessedLetters[x], x) ,"color": this.setColor(this.guessedLetters[x], x)})
+      this.usedLetters.push(this.guessedLetters[x])
+
+      if (!this.checkIsGoodLetter(this.guessedLetters[x], x)) {
         isgood = false
       }
     }
+    this.usedLetters = this.usedLetters.filter(function (elem, index, self) {
+      return index === self.indexOf(elem);
+    })
+    this.usedLetters.sort()
     if (isgood) {
       console.log("win")
       this.state = PlayStates.won
@@ -70,7 +92,7 @@ export class WordGuessComponent {
       console.log("word is incorrect")
     }
     this.tries++
-    if (this.tries > this.maxTries) {
+    if (this.tries >= this.maxTries) {
       this.state = PlayStates.lost
     }
   }
@@ -96,7 +118,6 @@ export class WordGuessComponent {
       return "red"
     }
   }
-
   newGame() {
     this.state = PlayStates.playing
     this.word = ''
@@ -104,6 +125,23 @@ export class WordGuessComponent {
     this.tries = 0;
     this.maxTries = 3
     this.styles = []
+    this.hint=false;
+    this.anotherHint = false;
     this.getWord()
+    this.usedLetters = [];
+  }
+  seeHint() {
+    if (this.hint) {
+      this.hint = false
+    } else {
+      this.hint = true
+    }
+  }
+  seeAnotherHint(){
+    if (this.anotherHint) {
+      this.anotherHint = false
+    } else {
+      this.anotherHint = true
+    }
   }
 }

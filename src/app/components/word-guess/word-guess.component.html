@@ -1,27 +1,52 @@
-<h2>{{title}}</h2>
-<h3>{{instructions}}</h3>
-<h4>{{word}}</h4>
-<h3>{{tries}}</h3>
-<button (click)="newGame()">New Game</button>
-<h5>difficulty: {{difficulty}}</h5>
-@if(state == 0){
-    <form>
+<div class="WprdGuessContainer">
+    <h2>{{title}}</h2>
+    <h3>{{instructions}}</h3>
+    <div class="hintContainer">
+        @if(hint){
+        <button (click)="seeHint()">Close hint for this word</button>
+        <h4>{{definition}}</h4>
+        @if(anotherHint){
+        <h4>The first letter of this word is {{word[0]}}</h4>
+        }@else{
+        <button (click)="seeAnotherHint()">See another hint for this word</button>
+        }
+        }@else{
+        <button (click)="seeHint()">See a hint for this word</button>
+        }
+    </div>
+    <h3>Attempts: {{tries}}</h3>
+    <button (click)="newGame()">New Game</button>
+    @if(state == 0){
+    <div class="usedLettersContainer">
+        <h3>Used Letters</h3>
+        <div class="usedLetters">
+            @for(letter of usedLetters; track $index ){
+            <h5>{{letter}},</h5>
+            }
+        </div>
+    </div>
+    <h5>difficulty: {{difficulty}}</h5>
+    <form class="difficultyContainer">
         <input type="range" min="0" max="5" [(ngModel)]="difficulty" value={{difficulty}} name="difficulty">
     </form>
-    <button (click)="setDifficulty()">Set Difficulty</button>
-    <form>
+    <form class="gameContainer">
         @for(letter of word; track $index ){
         <input type="text" [maxLength]=1 [(ngModel)]="guessedLetters[$index]" name="guessedLetters[$index]"
             style={{styles[$index]}}>
-
         }
         <input type="button" value="Check Word" (click)="checkWord()">
     </form>
-    {{guessedLetters[0]}}
-}
-@else if (state == 1) {
-    <h3>YOU WIN</h3>
-}
-@else if (state == 2) {
-    <h3>YOU LOSE</h3>
-}
+    }
+    @else if (state == 1) {
+    <div class="win">
+        <h3>YOU WIN</h3>
+        <h4> the word is {{word}}</h4>
+    </div>
+    }
+    @else if (state == 2) {
+    <div class="lose">
+        <h3>YOU LOSE</h3>
+        <h4> the word is {{word}}</h4>
+    </div>
+    }
+</div>

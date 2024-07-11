@@ -1,0 +1,27 @@
+<h2>{{title}}</h2>
+<h3>{{instructions}}</h3>
+<h4>{{word}}</h4>
+<h3>{{tries}}</h3>
+<button (click)="newGame()">New Game</button>
+<h5>difficulty: {{difficulty}}</h5>
+@if(state == 0){
+    <form>
+        <input type="range" min="0" max="5" [(ngModel)]="difficulty" value={{difficulty}} name="difficulty">
+    </form>
+    <button (click)="setDifficulty()">Set Difficulty</button>
+    <form>
+        @for(letter of word; track $index ){
+        <input type="text" [maxLength]=1 [(ngModel)]="guessedLetters[$index]" name="guessedLetters[$index]"
+            style={{styles[$index]}}>
+
+        }
+        <input type="button" value="Check Word" (click)="checkWord()">
+    </form>
+    {{guessedLetters[0]}}
+}
+@else if (state == 1) {
+    <h3>YOU WIN</h3>
+}
+@else if (state == 2) {
+    <h3>YOU LOSE</h3>
+}

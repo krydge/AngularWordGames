@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { WordGuessComponent } from './components/word-guess/word-guess.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,  WordGuessComponent],
+  imports: [RouterOutlet,  WordGuessComponent, RouterOutlet,RouterLink],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

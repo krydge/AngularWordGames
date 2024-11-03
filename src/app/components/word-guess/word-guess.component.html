@@ -1,6 +1,6 @@
-<div class="WprdGuessContainer">
+<div class="WordGuessContainer">
     <h2>{{title}}</h2>
-    <h3>{{instructions}}</h3>
+    <p>{{instructions}}</p>
     <div class="hintContainer">
         @if(hint){
         <button (click)="seeHint()">Close hint for this word</button>
@@ -14,14 +14,14 @@
         <button (click)="seeHint()">See a hint for this word</button>
         }
     </div>
-    <h3>Attempts: {{tries}}</h3>
+    <h4>Attempts: {{tries}}</h4>
     <button (click)="newGame()">New Game</button>
     @if(state == 0){
     <div class="usedLettersContainer">
-        <h3>Used Letters</h3>
+        <h4>Used Letters</h4>
         <div class="usedLetters">
             @for(letter of usedLetters; track $index ){
-            <h5>{{letter}},</h5>
+            {{letter}},
             }
         </div>
     </div>
@@ -34,8 +34,8 @@
         <input type="text" [maxLength]=1 [(ngModel)]="guessedLetters[$index]" name="guessedLetters[$index]"
             style={{styles[$index]}}>
         }
-        <input type="button" value="Check Word" (click)="checkWord()">
     </form>
+    <input type="button" value="Check Word" (click)="checkWord()">
     }
     @else if (state == 1) {
     <div class="win">

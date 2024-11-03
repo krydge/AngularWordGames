@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
 export class WordGuessComponent {
   state = PlayStates.playing
   title: string = " Word Guess";
-  maxTries: number = 6
+  readonly maxTries: number = 6
   instructions: string = `Guess the word, enter your guess for the word. Correctly placed letters will be underlined in green, correctly guessed  in the incorrect position will be underlined in yellow. Incorrectly guessed letters will be underlined in red. You have ${this.maxTries} guesses. Good luck!`;
   difficulty = '0';
   word: string = ''
@@ -123,7 +123,6 @@ export class WordGuessComponent {
     this.word = ''
     this.guessedLetters = [];
     this.tries = 0;
-    this.maxTries = 3
     this.styles = []
     this.hint=false;
     this.anotherHint = false;
